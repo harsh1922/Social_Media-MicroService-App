@@ -15,7 +15,7 @@ const errorHandler = require('./middleware/errorHandler.js');
 
 
 const app = express();
-const port = process.env.PORT || 30001
+const port = process.env.PORT || 3001
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)

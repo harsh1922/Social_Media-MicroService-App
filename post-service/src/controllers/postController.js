@@ -7,8 +7,19 @@ const createPost = async(req, res) => {
     logger.info('Post Creation endpoint hit...');
     try {
         const { content, mediaIds } = req.body;
+
         const newPost = new Post({
-            user: req.user.userId
+            user: req.user.userId,
+            content,
+            mediaIds: mediaIds || []
+        });
+
+        await newPost.save();
+        logger.info('Post Created Successfully', newPost);
+
+        res.status(201).json({
+            success: true,
+            message: 'Post Created Successfully'
         })
 
 
@@ -47,3 +58,5 @@ const deletePost = async(req, res) => {
         })
     }
 }
+
+module.exports = { createPost, getAllPosts, deletePost }
