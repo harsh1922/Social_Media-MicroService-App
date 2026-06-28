@@ -10,6 +10,7 @@ const proxy = require('express-http-proxy')
 
 const logger = require('./utils/logger');
 const errorHandler = require('./middleware/errorHandler');
+const { validateToken } = require('./middleware/authMiddleware');
 
 const port = process.env.PORT || 30001
 const app = express();
@@ -100,9 +101,30 @@ app.use('/v1/auth', proxy(process.env.USER_SERVICE_URL, {
     }
 }));
 
+//Setting Proxy for Post-Service
+
+app.use('/v1/posts', validateToken, proxy(process.env.POST_SERVICE_URL, {
+
+    ...proxyOptions,
+
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+        proxyReqOpts.headers["Content-Type"] = 'application/json';
+
+        proxyReqOpts.headers['x-user-id'] = srcReq.user.userId
+
+        return proxyReqOpts;
+    },
+
+    userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+        logger.info(`Response recieved from Post Service : ${proxyRes.statusCode}`)
+        return proxyResData
+    }
+}));
+
 app.use(errorHandler);
 
 app.listen(port, () => {
     logger.info(`Api Gateway running on ${port}`)
-    logger.info(`User Service running on ${process.env.USER_SERVICE_URL}`)
+    logger.info(`User Service running on ${process.env.USER_SERVICE_URL}`);
+    logger.info(`Post Service running on ${process.env.POST_SERVICE_URL}`)
 })
