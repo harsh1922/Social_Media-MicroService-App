@@ -170,4 +170,4 @@ const deletePost = async(req, res) => {
     }
 }
 
-module.exports = { createPost, getAllPosts, deletePost }
+module.exports = { createPost, getAllPosts, deletePost, getPost }
