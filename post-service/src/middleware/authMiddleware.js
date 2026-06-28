@@ -5,14 +5,16 @@ const authRequest = (req, res, next) => {
 
     if (!userId) {
         logger.warn('Access attempted withour user ID');
-        res.status(401).json({
+        return res.status(401).json({
             success: false,
             mesaage: 'Auth required! Please Login to continue',
 
         })
     }
 
-    req.user = userId; // storing userId in req object so that post service can have iserID  that which user is posting the content in socail-media-app
+    req.user = {
+            userId,
+        } // storing userId in req object so that post service can have iserID  that which user is posting the content in socail-media-app
     next();
 }
 

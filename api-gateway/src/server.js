@@ -108,6 +108,7 @@ app.use('/v1/posts', validateToken, proxy(process.env.POST_SERVICE_URL, {
     ...proxyOptions,
 
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+        //manually adding heard on our api gateway so that we can get use.Id in post service
         proxyReqOpts.headers["Content-Type"] = 'application/json';
 
         proxyReqOpts.headers['x-user-id'] = srcReq.user.userId
