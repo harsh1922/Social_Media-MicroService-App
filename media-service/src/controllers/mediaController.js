@@ -21,7 +21,7 @@ const uploadMedia = async(req, res) => {
         logger.info('Uploading to Cloudinary Successfully');
 
         const newlyCreatedMedia = new Media({
-            publicId: cloudinaryUploadResultpublic_id,
+            publicId: cloudinaryUploadResult.public_id,
             originalName,
             mimeType,
             userId
@@ -30,7 +30,7 @@ const uploadMedia = async(req, res) => {
         await newlyCreatedMedia.save();
         return res.status(201).json({
             success: true,
-            mediaId: ,
+            mediaId: "",
             message: 'No file is present in the req'
         })
 

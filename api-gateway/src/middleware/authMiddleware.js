@@ -5,7 +5,7 @@ const validateToken = (req, res, next) => {
     const authHeader = req.headers['authorization']; // headers is an object and here w are fetching authrization key value from header object
     const token = authHeader && authHeader.split(" ")[1]; // spliitng the bearer token
     if (!token) {
-        logger.warn('Access ateempt without valid token')
+        logger.warn('Access attempt without valid token')
         return res.status(401).json({
             success: false,
             message: 'Auth required'
@@ -20,7 +20,7 @@ const validateToken = (req, res, next) => {
                 message: 'Invalid token'
             })
         }
-        req.user = user;
+        req.user = user; // so here api gateway ke srcreq mein user obj store krre hai
         next();
     })
 }
