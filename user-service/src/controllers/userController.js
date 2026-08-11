@@ -132,6 +132,7 @@ const refreshTokenUser = async(req, res) => {
             });
         }
 
+
         //Find user refresh tokken in RefreshToken Schema/model
         const storedToken = await RefreshToken.findOne({ token: refreshToken });
 
@@ -158,6 +159,7 @@ const refreshTokenUser = async(req, res) => {
             })
         }
 
+        //Refreh TOken Rotation Concept
         /// if user found , then delete old refresh token and generate new refrehToken 
 
         //delete the existing/old refresh token
@@ -214,4 +216,5 @@ const logoutUser = async(req, res) => {
     }
 }
 
+module.exports = { registerUser, loginUser, refreshTokenUser, logoutUser };
 module.exports = { registerUser, loginUser, refreshTokenUser, logoutUser };

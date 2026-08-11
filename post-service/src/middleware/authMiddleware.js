@@ -1,7 +1,7 @@
 const logger = require('../utils/logger');
 
 const authRequest = (req, res, next) => {
-    const userId = req.headers['x-user-id'] //api gateway will set this header and from that wee get the user Id in diff services
+    const userId = req.headers['x-user-id'] //api gateway will set this header and from that we get the user Id in diff services
 
     if (!userId) {
         logger.warn('Access attempted withour user ID');

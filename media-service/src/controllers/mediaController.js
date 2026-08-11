@@ -12,29 +12,40 @@ const uploadMedia = async(req, res) => {
             })
         }
 
-        const { originalName, mimeType } = req.file;
+        const { originalname, mimetype } = req.file;
         const userId = req.user.userId // userId we already store in req.user object  in authMiddleware.
 
-        logger.info(`File details: name${originalName}, mime:${mimeType}`);
+        logger.info(`File details: name${originalname}, mime:${mimetype}`);
         logger.info('Uploading to Cloudinary Started');
+
+        // Uplodaing MEdia FIle to Coudinary
         const cloudinaryUploadResult = await uploadMediaToCloudinary(req.file);
+
         logger.info('Uploading to Cloudinary Successfully');
 
         const newlyCreatedMedia = new Media({
             publicId: cloudinaryUploadResult.public_id,
-            originalName,
-            mimeType,
-            userId
+            originalName: originalname,
+            mimeType: mimetype,
+            url: cloudinaryUploadResult.secure_url,
+            userId,
         });
 
         await newlyCreatedMedia.save();
+
         return res.status(201).json({
             success: true,
-            mediaId: "",
-            message: 'No file is present in the req'
+            mediaId: newlyCreatedMedia._id,
+            message: 'Media Uploaded Successfully'
         })
 
-    } catch (error) {
-
+    } catch (e) {
+        logger.error('Error Creating Media', e);
+        res.status(500).json({
+            success: false,
+            message: 'Error Creating Media'
+        })
     }
-}
+};
+
+module.exports = { uploadMedia };

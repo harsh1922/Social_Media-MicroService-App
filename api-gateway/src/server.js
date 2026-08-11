@@ -102,6 +102,7 @@ app.use('/v1/auth', proxy(process.env.USER_SERVICE_URL, {
 }));
 
 //Setting Proxy for Post-Service
+
 //Paaisng valiateToken middleware to validate or protect  whole post service ie user cant CRUd post service till its token is verfied/validated
 app.use('/v1/posts', validateToken, proxy(process.env.POST_SERVICE_URL, {
 
@@ -109,7 +110,7 @@ app.use('/v1/posts', validateToken, proxy(process.env.POST_SERVICE_URL, {
 
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
 
-        //manually adding headers on our api gateway so that we can get userId from x-user-id header  in post service
+        //manually adding headers on our api gateway so that we can get userId from 'x-user-id header'  in post service
         proxyReqOpts.headers["Content-Type"] = 'application/json';
 
         proxyReqOpts.headers['x-user-id'] = srcReq.user.userId
@@ -122,6 +123,40 @@ app.use('/v1/posts', validateToken, proxy(process.env.POST_SERVICE_URL, {
         return proxyResData
     }
 }));
+
+////Setting Proxy for Media-Service
+app.use('/v1/media', validateToken, proxy(process.env.MEDIA_SERVICE_URL, {
+
+    ...proxyOptions,
+
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+
+        //manually adding headers on our api gateway so that we can get userId from 'x-user-id header'  in MEDIA service
+
+        proxyReqOpts.headers['x-user-id'] = srcReq.user.userId
+
+
+        if (!srcReq.headers['content-type'].startsWith('multipart/form-data')) {
+            proxyReqOpts.headers["Content-Type"] = 'application/json';
+        }
+
+
+        return proxyReqOpts;
+    },
+
+    userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+        logger.info(`Response recieved from Media Service : ${proxyRes.statusCode}`)
+        return proxyResData
+    },
+
+    parseReqBody: false
+
+}));
+
+
+
+
+
 
 app.use(errorHandler);
 

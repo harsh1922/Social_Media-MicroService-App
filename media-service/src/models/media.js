@@ -29,7 +29,7 @@ const mediaSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-// Examplke of this modle created data({
+// Example of this modle created data({
 //             "_id": "6860a2d....",
 //             "publicId": "users/123/profile_abc123",
 //             "originalName": "profile.jpg",
