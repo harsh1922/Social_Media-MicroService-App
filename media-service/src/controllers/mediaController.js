@@ -1,3 +1,4 @@
+const Media = require('../models/media')
 const { uploadMediaToCloudinary } = require('../utils/cloudinary');
 const logger = require('../utils/logger');
 
@@ -48,4 +49,25 @@ const uploadMedia = async(req, res) => {
     }
 };
 
-module.exports = { uploadMedia };
+const getAllMedia = async(req, req) => {
+    logger.info('Get All  Media  Endpoint Hit');
+    try {
+        const Medias = await Media.find({});
+
+        logger.info('All Medias are fetched successfully');
+
+        return res.status(201).json(({
+            Medias,
+            success: true
+        }))
+
+    } catch (error) {
+        logger.error('Error fetching all Medias')
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching Medias"
+        })
+    }
+}
+
+module.exports = { uploadMedia, getAllMedia };

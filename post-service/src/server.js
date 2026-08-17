@@ -6,11 +6,11 @@ const mongoose = require('mongoose');
 const Redis = require('ioredis');
 const logger = require('./utils/logger.js');
 const { rateLimit } = require('express-rate-limit');
-const {
-    RedisStore
-} = require('rate-limit-redis');
+const { RedisStore } = require('rate-limit-redis');
 const postRoutes = require('./routes/post-routes');
 const errorHandler = require('./middleware/errorHandler.js');
+
+const { connectToRabbitMQ } = require('./utils/rabbitmq')
 
 
 const app = express();
@@ -84,10 +84,19 @@ app.use('/api/posts', (req, res, next) => {
 
 app.use(errorHandler);
 
+async function startServer() {
+    try {
+        await connectToRabbitMQ();
+        app.listen(port, () => {
+            logger.info(`Post service running on ${port}`)
+        })
+    } catch (error) {
+        logger.info(`Failed to Conect Post Service on Port:${port}`, error);
+        process.exit(1);
+    }
+}
 
-app.listen(port, () => {
-    logger.info(`Post service running on ${port}`)
-})
+startServer();
 
 
 ///handling Uncaught/Unhandled Promise

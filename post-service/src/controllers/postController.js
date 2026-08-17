@@ -1,6 +1,7 @@
 const logger = require('../utils/logger');
 const Post = require('../models/Post');
 const { validateCreatePost } = require('../utils/validation');
+const { publishEvent } = require('../utils/rabbitmq');
 
 // Invalind Cache if Key is updated or deleted
 async function invalidatePostCache(req, input) {
@@ -156,7 +157,15 @@ const deletePost = async(req, res) => {
             });
         }
 
-        // delete from redis aswell
+        //Publish post deleet event so that we can delete that post media form out media service as well using RabbitMQ Async  Communcication
+        await publishEvent('post.deleted', {
+            postId: post._id.toString(),
+            userId: req.user.userId,
+            mediaIds: post.mediaIds
+        })
+
+
+        // delete from redis as well
         await invalidatePostCache(req, req.params.id);
         res.json({
             message: "Post deleted successfully",

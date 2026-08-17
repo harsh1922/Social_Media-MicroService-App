@@ -136,6 +136,7 @@ app.use('/v1/media', validateToken, proxy(process.env.MEDIA_SERVICE_URL, {
         proxyReqOpts.headers['x-user-id'] = srcReq.user.userId
 
 
+        // if incoming req header[content-type] is multipart/form-data then pass it directly else set prooxtRes header conten-yupe to application/json
         if (!srcReq.headers['content-type'].startsWith('multipart/form-data')) {
             proxyReqOpts.headers["Content-Type"] = 'application/json';
         }
@@ -149,13 +150,9 @@ app.use('/v1/media', validateToken, proxy(process.env.MEDIA_SERVICE_URL, {
         return proxyResData
     },
 
-    parseReqBody: false
+    parseReqBody: false // this will make sure tha api gatwate will not parse incoming req data itwill send data as it to TJe <Edia mservice, cuz in medai service we hve form-data ie file,img ..etc so we will not parse it we weill directly send to media service/server
 
 }));
-
-
-
-
 
 
 app.use(errorHandler);
@@ -163,5 +160,6 @@ app.use(errorHandler);
 app.listen(port, () => {
     logger.info(`Api Gateway running on ${port}`)
     logger.info(`User Service running on ${process.env.USER_SERVICE_URL}`);
-    logger.info(`Post Service running on ${process.env.POST_SERVICE_URL}`)
+    logger.info(`Post Service running on ${process.env.POST_SERVICE_URL}`);
+    logger.info(`Media Service running on ${process.env.MEDIA_SERVICE_URL}`)
 })

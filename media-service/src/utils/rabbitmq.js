@@ -35,4 +35,12 @@ async function publishEvent(routingKey, message) {
     logger.info(`Event Published: ${routingKey}`);
 }
 
-module.exports = { connectToRabbitMQ, publishEvent };
+async function consumeEvent(routingKey, message) {
+    if (!channel) {
+        await connectToRabbitMQ()
+    }
+
+    const queue = await channel.assertQueue("")
+}
+
+module.exports = { connectToRabbitMQ, publishEvent, consumeEvent };
