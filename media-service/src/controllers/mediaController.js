@@ -49,7 +49,7 @@ const uploadMedia = async(req, res) => {
     }
 };
 
-const getAllMedia = async(req, req) => {
+const getAllMedia = async(req, res) => {
     logger.info('Get All  Media  Endpoint Hit');
     try {
         const Medias = await Media.find({});

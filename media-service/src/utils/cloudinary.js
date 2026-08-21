@@ -1,12 +1,9 @@
+const dotenv = require("dotenv");
 dotenv.config();
 const cloudinary = require('cloudinary').v2;
-const express = require('express');
-const app = express()
-const port = 3000
-
-app.get('/', (req, res) => res.send('Hello World!'))
-app.listen(port, () => console.log(`Example app listening on port ${port}!`)) = require('express');
 const logger = require('./logger');
+
+console.log(process.env.cloud_name, process.env.api_key, process.env.api_secret, process.env.RABBITMQ_URL);
 
 
 cloudinary.config({

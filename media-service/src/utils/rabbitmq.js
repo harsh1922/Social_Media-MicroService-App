@@ -40,7 +40,19 @@ async function consumeEvent(routingKey, message) {
         await connectToRabbitMQ()
     }
 
-    const queue = await channel.assertQueue("")
+    const q = await channel.assertQueue("", { exclusive: true });
+
+    //connsuming the event 
+    await channel.bindQueue(q.queue, EXCHANGE_NAME, routingKey);
+    channel.consume(q.queue, (msg) => {
+        if (msg !== NULL) {
+            const content = JSON.parse(msg.content.toString());
+            callback(content);
+            channel.ack(msg);
+        }
+    })
+
+    logger.info(`Subscribed/Consumed the event ${routingKey}`)
 }
 
 module.exports = { connectToRabbitMQ, publishEvent, consumeEvent };

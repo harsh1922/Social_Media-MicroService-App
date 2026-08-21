@@ -30,7 +30,7 @@ const createPost = async(req, res) => {
         const { content, mediaIds } = req.body;
         console.log("REQ.USER =", req.user);
         const newPost = new Post({
-            user: req.user,
+            user: req.user.userId,
             content,
             mediaIds: mediaIds || []
         });
@@ -158,6 +158,8 @@ const deletePost = async(req, res) => {
         }
 
         //Publish post deleet event so that we can delete that post media form out media service as well using RabbitMQ Async  Communcication
+
+        // Publishing Post Delete Event 
         await publishEvent('post.deleted', {
             postId: post._id.toString(),
             userId: req.user.userId,

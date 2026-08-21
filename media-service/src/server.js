@@ -7,6 +7,11 @@ const mongoose = require('mongoose');
 const logger = require('./utils/logger.js');
 const mediaRoutes = require('./routes/route.js');
 const errorHandler = require('./middleware/errorHandler.js');
+const { consumeEvent } = require('./utils/rabbitmq.js');
+const { handlePostDeleted } = require('./eventHandlers/media-eventHandler.js');
+const {
+    connectToRabbitMQ
+} = require('./utils/rabbitmq.js')
 
 const app = express();
 const port = process.env.PORT;
@@ -36,10 +41,25 @@ app.use('/api/media', mediaRoutes);
 
 app.use(errorHandler);
 
+async function startServer() {
+    try {
+        await connectToRabbitMQ();
 
-app.listen(port, () => {
-    logger.info(`Media service running on ${port}`)
-})
+        //consume all the event here
+        await consumeEvent('post.deleted', handlePostDeleted)
+
+
+
+        app.listen(port, () => {
+            logger.info(`Media service running on ${port}`)
+        })
+    } catch (error) {
+        logger.info(`Failed to Conect Media Service on Port:${port}`, error);
+        process.exit(1);
+    }
+}
+
+startServer();
 
 
 ///handling Uncaught/Unhandled Promise
