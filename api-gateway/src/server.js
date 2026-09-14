@@ -103,7 +103,8 @@ app.use('/v1/auth', proxy(process.env.USER_SERVICE_URL, {
 
 //Setting Proxy for Post-Service
 
-//Paaisng valiateToken middleware to validate or protect  whole post service ie user cant CRUd post service till its token is verfied/validated
+//Passing valiateToken middleware to validate or protect  whole post service ie user cant CRUd post service till its token is verfied/validated
+
 app.use('/v1/posts', validateToken, proxy(process.env.POST_SERVICE_URL, {
 
     ...proxyOptions,
@@ -124,7 +125,7 @@ app.use('/v1/posts', validateToken, proxy(process.env.POST_SERVICE_URL, {
     }
 }));
 
-////Setting Proxy for Media-Service
+//  Setting Proxy for Media-Service
 app.use('/v1/media', validateToken, proxy(process.env.MEDIA_SERVICE_URL, {
 
     ...proxyOptions,
@@ -155,11 +156,34 @@ app.use('/v1/media', validateToken, proxy(process.env.MEDIA_SERVICE_URL, {
 }));
 
 
+// Setting Proxy for Search-Service
+
+app.use('/v1/search', validateToken, proxy(process.env.SEARCH_SERVICE_URL, {
+
+    ...proxyOptions,
+
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+
+        //manually adding headers on our api gateway so that we can get userId from 'x-user-id header'  in post service
+        proxyReqOpts.headers["Content-Type"] = 'application/json';
+
+        proxyReqOpts.headers['x-user-id'] = srcReq.user.userId
+
+        return proxyReqOpts;
+    },
+
+    userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+        logger.info(`Response recieved from Post Service : ${proxyRes.statusCode}`)
+        return proxyResData
+    }
+}));
+
 app.use(errorHandler);
 
 app.listen(port, () => {
     logger.info(`Api Gateway running on ${port}`)
     logger.info(`User Service running on ${process.env.USER_SERVICE_URL}`);
     logger.info(`Post Service running on ${process.env.POST_SERVICE_URL}`);
-    logger.info(`Media Service running on ${process.env.MEDIA_SERVICE_URL}`)
+    logger.info(`Media Service running on ${process.env.MEDIA_SERVICE_URL}`);
+    logger.info(`Search Service running on ${process.env.SEARCH_SERVICE_URL}`)
 })

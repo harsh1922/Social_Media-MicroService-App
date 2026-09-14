@@ -16,7 +16,7 @@ const { handlePostCreated } = require('./eventHandler/search-handler.js');
 
 
 const app = express();
-const Port = procees.env.PORT || 3004;
+const port = procees.env.PORT || 3004;
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
@@ -79,3 +79,5 @@ async function startServer() {
         logger.error('Error starting the Search Service')
     }
 }
+
+startServer();
