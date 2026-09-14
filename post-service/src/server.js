@@ -91,7 +91,7 @@ async function startServer() {
             logger.info(`Post service running on ${port}`)
         })
     } catch (error) {
-        logger.info(`Failed to Conect Post Service on Port:${port}`, error);
+        logger.error(`Failed to Conect Post Service on Port:${port}`, error);
         process.exit(1);
     }
 }

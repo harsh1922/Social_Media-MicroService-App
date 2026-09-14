@@ -36,6 +36,19 @@ const createPost = async(req, res) => {
         });
 
         await newPost.save();
+
+
+        // publish this this new post created event so that serach service can  consume it and index this post in its db so tat we can get eficemt search service feature..
+
+        await publishEvent('post.created', {
+            postId: newPost._id.toString(),
+            userId: newPost.user.userId,
+            content: newPost.content,
+            createdAt: newPost.createdAt
+        })
+
+
+
         await invalidatePostCache(req, newPost._id.toString());
         logger.info('Post Created Successfully', newPost);
 
@@ -157,7 +170,7 @@ const deletePost = async(req, res) => {
             });
         }
 
-        //Publish post deleet event so that we can delete that post media form out media service as well using RabbitMQ Async  Communcication
+        //Publish post delete event so that we can delete that post media form out media service as well using RabbitMQ Async  Communcication
 
         // Publishing Post Delete Event 
         await publishEvent('post.deleted', {
